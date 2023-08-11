@@ -20,7 +20,7 @@ import hashlib
 import torch
 
 
-def generate_filename(input_string: str, max_length: 32) -> str:
+def generate_filename(input_string: str, max_length: int = 32) -> str:
     # Remove special characters and replace spaces with underscores
     sanitized_str = ''.join(
         e for e in input_string if e.isalnum() or e == ' ').replace(' ', '_')
