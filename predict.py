@@ -109,12 +109,12 @@ class Predictor(BasePredictor):
             loudness_compressor=True
         )
 
+        path = wav_path
+
         if output_format == "mp3":
             mp3_path = f"{name}.mp3"
             subprocess.call(["ffmpeg", "-i", wav_path, mp3_path])
             os.remove(wav_path)
             path = mp3_path
-        else:
-            path = wav_path
 
         return Path(path)

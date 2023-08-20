@@ -3,12 +3,13 @@
 
 build:
   # set to true if your model requires a GPU
-  gpu: true
+  gpu: false
   cuda: "11.7"
 
   # a list of ubuntu apt packages to install
   system_packages:
     - "git"
+    - "ffmpeg"
   # - "libgl1-mesa-glx"
   # - "libglib2.0-0"
 
