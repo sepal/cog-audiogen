@@ -85,18 +85,20 @@ class Predictor(BasePredictor):
     ) -> Path:
         """Run a single prediction on the model"""
 
+        if prompt is None:
+            raise ValueError("Must provide either prompt or input_audio")
+
         self.set_generation_params(
-            duration,
-            top_k,
-            top_p,
-            temperature,
-            classifier_free_guidance,
+            duration=duration,
+            top_k=top_k,
+            top_p=top_p,
+            temperature=temperature,
+            cfg_coef=classifier_free_guidance,
         )
         wav = self.__model.generate([prompt])
-        temp_dir = Path(tempfile.mkdtemp())
 
         name = generate_filename(prompt)
-        wav_path = os.path.join(temp_dir, f"{name}.wav")
+        wav_path = f"{name}.wav"
 
         audio_write(
             wav_path,
@@ -108,7 +110,7 @@ class Predictor(BasePredictor):
         )
 
         if output_format == "mp3":
-            mp3_path = os.path.join(temp_dir, f"{name}.mp3")
+            mp3_path = f"{name}.mp3"
             subprocess.call(["ffmpeg", "-i", wav_path, mp3_path])
             os.remove(wav_path)
             path = mp3_path
