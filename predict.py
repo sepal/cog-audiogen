@@ -93,7 +93,7 @@ class Predictor(BasePredictor):
             top_k=top_k,
             top_p=top_p,
             temperature=temperature,
-            cfg_coef=classifier_free_guidance,
+            classifier_free_guidance=classifier_free_guidance,
         )
         wav = self.__model.generate([prompt])
 
