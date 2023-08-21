@@ -20,19 +20,6 @@ import hashlib
 import torch
 
 
-def generate_filename(input_string: str, max_length: int = 32) -> str:
-    # Remove special characters and replace spaces with underscores
-    sanitized_str = ''.join(
-        e for e in input_string if e.isalnum() or e == ' ').replace(' ', '_')
-
-    # If the sanitized string is within the max_length, return it
-    if len(sanitized_str) <= max_length:
-        return sanitized_str
-
-    # If it's longer, take the first (max_length - 8) characters and append the first 8 characters of its hash
-    return sanitized_str[:max_length - 8] + hashlib.md5(sanitized_str.encode()).hexdigest()[:8]
-
-
 class Predictor(BasePredictor):
     def setup(self) -> None:
         self.__device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -97,24 +84,17 @@ class Predictor(BasePredictor):
         )
         wav = self.__model.generate([prompt])
 
-        name = generate_filename(prompt)
-        wav_path = f"{name}.wav"
+        name = "out"
+        path = f"{name}.{output_format}"
 
         audio_write(
-            wav_path,
+            name,
             wav[0].cpu(),
             self.__model.sample_rate,
-            format="mp3",
+            format=output_format,
             strategy="loudness",
             loudness_compressor=True
         )
 
-        path = wav_path
-
-        if output_format == "mp3":
-            mp3_path = f"{name}.mp3"
-            subprocess.call(["ffmpeg", "-i", wav_path, mp3_path])
-            os.remove(wav_path)
-            path = mp3_path
 
         return Path(path)
